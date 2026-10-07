@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vessel Monitoring System — V2</title>
+<style>
+:root{--navy:#0b1f33;--blue:#1769aa;--bg:#f4f7fb;--card:#fff;--text:#17202a;--muted:#667085;--line:#e4e7ec;--green:#16834b;--red:#c73535;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#071a2b,#124d78);color:white;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:#124d78;display:grid;place-items:center;font-size:24px}.brand h1{font-size:18px;margin:0}.brand small{opacity:.8}
+.user{font-size:13px;background:#ffffff1c;padding:8px 12px;border-radius:20px}
+nav{background:var(--navy);display:flex;gap:4px;padding:8px 18px;overflow:auto}nav button{border:0;background:transparent;color:#cbd5e1;padding:11px 15px;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap}nav button.active,nav button:hover{background:#17425f;color:#fff}
+main{padding:22px;max-width:1500px;margin:auto}.view{display:none}.view.active{display:block}
+.pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.pagehead h2{margin:0}.muted{color:var(--muted);font-size:13px}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8eef5;color:#19324a}.danger{background:#fee4e2;color:#a52828}.success{background:#e6f6ed;color:#12653d}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:17px;box-shadow:0 2px 7px #102a4308}.kpi{font-size:28px;font-weight:800;margin-top:5px}.label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:18px}.panel h3{margin:0 0 14px}
+.bar{display:flex;align-items:center;gap:8px;margin:10px 0}.bar span:first-child{width:100px;font-size:13px}.track{height:10px;background:#edf2f7;border-radius:8px;flex:1;overflow:hidden}.fill{height:100%;background:#2677b9;border-radius:8px}.bar b{width:28px;text-align:right}
+table{width:100%;border-collapse:collapse;background:#fff}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);font-size:12px;text-align:left;white-space:nowrap}th{background:#f8fafc;position:sticky;top:0;z-index:1}tr:hover td{background:#f8fbff}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}.badge.green{background:#e6f6ed;color:#12653d}.badge.red{background:#fee4e2;color:#a52828}.badge.gray{background:#eef2f6;color:#52606d}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filters input,.filters select,.formgrid input,.formgrid select{padding:10px;border:1px solid #d5dbe3;border-radius:8px;background:white}
+.filters input{min-width:220px}.formgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.formgrid label{font-size:12px;font-weight:700;color:#475467;display:flex;flex-direction:column;gap:5px}.wide{grid-column:span 3}
+.modal{position:fixed;inset:0;background:#061523aa;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.open{display:flex}.modalbox{background:white;border-radius:14px;max-width:1000px;width:100%;max-height:92vh;overflow:auto;padding:22px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.close{border:0;background:#eef2f6;border-radius:50%;width:34px;height:34px;cursor:pointer}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.notice{padding:12px 14px;border-radius:9px;background:#fff8e6;border:1px solid #f3dfab;color:#775414;font-size:13px;margin-bottom:16px}
+.report{line-height:1.55}.report h2{text-align:center}.report .sig{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:45px;text-align:center}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}}
+@media(max-width:650px){main{padding:13px}.cards{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.wide{grid-column:span 1}.pagehead{align-items:flex-start;flex-direction:column}}
+@media print{header,nav,.no-print{display:none!important}body{background:white}.view{display:none!important}.view.printview{display:block!important}main{padding:0}.panel{border:0}.report{font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">⚓</div><div><h1>Vessel Monitoring System</h1><small>Daily Vessel Monitoring via Automatic Identification System (AIS)</small></div></div>
+  <div class="user">V2 DEMO • Duty AIS Monitor</div>
+</header>
+<nav>
+  <button class="active" data-view="dashboard">Dashboard</button>
+  <button data-view="monitoring">AIS Monitoring</button>
+  <button data-view="radar">Radar Monitoring</button>
+  <button data-view="reports">Daily Report</button>
+  <button data-view="users">Users & Settings</button>
+</nav>
+<main>
+<section id="dashboard" class="view active">
+  <div class="pagehead"><div><h2>Operations Dashboard</h2><div class="muted">Live-style office demo using the September 2025 DVM structure.</div></div><button class="btn primary" onclick="openModal()">＋ Add Vessel</button></div>
+  <div class="cards">
+    <div class="card"><div class="label">Vessels Monitored</div><div class="kpi" id="kTotal">0</div></div>
+    <div class="card"><div class="label">Southbound</div><div class="kpi" id="kSouth">0</div></div>
+    <div class="card"><div class="label">Responsive</div><div class="kpi" id="kResp">0</div></div>
+    <div class="card"><div class="label">Unresponsive</div><div class="kpi" id="kUnresp">0</div></div>
+    <div class="card"><div class="label">International Flags</div><div class="kpi" id="kIntl">0</div></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><h3>Route of Vessel</h3><div id="routeBars"></div></div>
+    <div class="panel"><h3>Vessel Types</h3><div id="typeBars"></div></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h3>Recent Monitoring</h3><div class="tablewrap"><table><thead><tr><th>Vessel</th><th>Type</th><th>Direction</th><th>Speed</th><th>Last Port</th><th>Next Port</th><th>Status</th></tr></thead><tbody id="recent"></tbody></table></div></div>
+</section>
+
+<section id="monitoring" class="view">
+  <div class="pagehead"><div><h2>AIS Vessel Monitoring</h2><div class="muted">Based on the exact monitoring columns in your DVM workbook.</div></div><button class="btn primary" onclick="openModal()">＋ Add Vessel</button></div>
+  <div class="filters"><input id="search" placeholder="Search vessel / MMSI / IMO / port..." oninput="renderTable()"><select id="dirFilter" onchange="renderTable()"><option value="">All directions</option><option>NORTH</option><option>SOUTH</option><option>NORTHEAST</option><option>SOUTHEAST</option><option>EAST</option><option>SOUTHWEST</option><option>WEST</option><option>NORTHWEST</option></select><select id="statusFilter" onchange="renderTable()"><option value="">All status</option><option>RESPONSIVE</option><option>UNRESPONSIVE</option></select><button class="btn secondary" onclick="exportCSV()">Export CSV</button></div>
+  <div class="tablewrap"><table><thead><tr><th>No.</th><th>Date/Time</th><th>Vessel / MMSI / IMO</th><th>Type</th><th>Call Sign</th><th>Heading</th><th>Speed</th><th>Direction</th><th>Cargo</th><th>Last Port</th><th>Next Port</th><th>Flag</th><th>Status</th><th>Action</th></tr></thead><tbody id="monitorRows"></tbody></table></div>
+</section>
+
+<section id="radar" class="view">
+  <div class="pagehead"><div><h2>Radar Monitoring</h2><div class="muted">Operational log for radar contacts and observations.</div></div><button class="btn primary" onclick="addRadar()">＋ Add Radar Contact</button></div>
+  <div class="notice">Demo mode: radar contacts are stored locally in this browser. V2 is structured for connection to a central office database.</div>
+  <div class="tablewrap"><table><thead><tr><th>Time</th><th>Contact</th><th>Bearing</th><th>Range</th><th>Course</th><th>Speed</th><th>Remarks</th></tr></thead><tbody id="radarRows"></tbody></table></div>
+</section>
+
+<section id="reports" class="view">
+  <div class="pagehead"><div><h2>Daily Report</h2><div class="muted">Generate a presentation-ready summary from the monitoring records.</div></div><div class="no-print"><button class="btn secondary" onclick="window.print()">Print / Save PDF</button></div></div>
+  <div class="panel report" id="reportContent"></div>
+</section>
+
+<section id="users" class="view">
+  <div class="pagehead"><div><h2>Users & Settings</h2><div class="muted">Role-based design for office deployment.</div></div></div>
+  <div class="grid2">
+    <div class="panel"><h3>Suggested User Roles</h3><table><tr><th>Role</th><th>Access</th></tr><tr><td>Administrator</td><td>Users, settings, all records, reports</td></tr><tr><td>Duty AIS Monitor</td><td>Add/edit monitoring and radar records</td></tr><tr><td>Supervisor</td><td>Review, approve, reports</td></tr><tr><td>Viewer</td><td>Dashboard and reports only</td></tr></table></div>
+    <div class="panel"><h3>V2 Deployment Status</h3><p>✓ Excel fields mapped<br>✓ Dashboard<br>✓ AIS monitoring<br>✓ Search/filter<br>✓ Daily report<br>✓ Radar log<br>✓ CSV export<br>✓ Role structure<br>○ Central database connection — next deployment step<br>○ Real authentication — next deployment step</p></div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="modalhead"><h2>Add Vessel Monitoring Record</h2><button class="close" onclick="closeModal()">×</button></div>
+<form id="vesselForm"><div class="formgrid">
+<label>Date/Time Monitored<input name="datetime" value="08 1100H SEPTEMBER 2025" required></label>
+<label>Distance Monitored<input name="distance"></label>
+<label>Distance Nearest Shoreline<input name="shore"></label>
+<label>Location Monitored (Lat/Long)<input name="location"></label>
+<label>Date/Time Challenged<input name="challenged"></label>
+<label>Distance Challenged<input name="distanceChallenged"></label>
+<label>Location Challenged<input name="challengedLocation"></label>
+<label class="wide">Vessel Name / MMSI / IMO<input name="vessel" required></label>
+<label>Type of Vessel<select name="type"><option>BULK CARRIER</option><option>GENERAL CARGO</option><option>CONTAINER SHIP</option><option>TANKER</option><option>PASSENGER</option><option>OTHER</option></select></label>
+<label>Call Sign<input name="callsign"></label>
+<label>Heading<input name="heading" placeholder="152°"></label>
+<label>Speed KN<input name="speed" placeholder="11.8 KN"></label>
+<label>Direction<select name="direction"><option>NORTH</option><option>NORTHEAST</option><option>EAST</option><option>SOUTHEAST</option><option>SOUTH</option><option>SOUTHWEST</option><option>WEST</option><option>NORTHWEST</option></select></label>
+<label>Free Board<select name="freeboard"><option>LOW</option><option>HIGH</option></select></label>
+<label>Type of Cargo<input name="cargo" value="NO CARGO"></label>
+<label>Last Port of Call<input name="lastPort"></label>
+<label>Next Port of Call<input name="nextPort"></label>
+<label>ETA<input name="eta"></label>
+<label>Flag Registry<input name="flag"></label>
+<label>Total Crew / Nationality<input name="crew"></label>
+<label>Name of Captain<input name="captain"></label>
+<label>Time Entry/Exit AOR<input name="aor"></label>
+<label>Response Status<select name="status"><option>RESPONSIVE</option><option>UNRESPONSIVE</option></select></label>
+</div><div class="actions"><button type="button" class="btn secondary" onclick="closeModal()">Cancel</button><button class="btn primary">Save Record</button></div></form>
+</div></div>
+
+<script>
+const seed=[
+{datetime:"08 1100H SEPTEMBER 2025",distance:"",shore:"",location:'14°03.7502"N 124°43.1578"E',challenged:"08 1100H SEPTEMBER 2025",distanceChallenged:"",challengedLocation:'14°03.7502"N 124°43.1578"E',vessel:"ACRUZ ORCHID / 636022630 / 9929285",type:"BULK CARRIER",callsign:"5LJS5",heading:"152°",speed:"11.8 KN",direction:"SOUTH",freeboard:"",cargo:"NO CARGO",lastPort:"TAIWAN",nextPort:"AUSTRALIA",eta:"17 0900H SEPTEMBER 2025",flag:"LIBERIA",crew:"21 FILIPINO",captain:"JAY GESTA",aor:"ENTRY",status:"RESPONSIVE"},
+{datetime:"08 1100H SEPTEMBER 2025",distance:"",shore:"",location:'14°11.1069"N 124°24.4198"E',challenged:"08 1115H SEPTEMBER 2025",distanceChallenged:"",challengedLocation:'14°11.1069"N 124°24.4198"E',vessel:"XIN HANG 9 / 352003754 / 1054852",type:"GENERAL CARGO",callsign:"3E5855",heading:"334°",speed:"10.1 KN",direction:"SOUTH",freeboard:"",cargo:"NO CARGO",lastPort:"CHINA",nextPort:"INDONESIA",eta:"13 1600H SEPTEMBER 2025",flag:"PANAMA",crew:"",captain:"",aor:"ENTRY",status:"UNRESPONSIVE"}];
+let records=JSON.parse(localStorage.getItem("dvm_v2_records")||"null")||seed;
+let radar=JSON.parse(localStorage.getItem("dvm_v2_radar")||"null")||[
+{time:"08 1115H",contact:"RADAR CONTACT 001",bearing:"152°",range:"18 NM",course:"SOUTH",speed:"11.8 KN",remarks:"Correlated with AIS: ACRUZ ORCHID"}
+];
+function save(){localStorage.setItem("dvm_v2_records",JSON.stringify(records));localStorage.setItem("dvm_v2_radar",JSON.stringify(radar))}
+function nav(id){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));if(id==="dashboard")renderDash();if(id==="monitoring")renderTable();if(id==="radar")renderRadar();if(id==="reports")renderReport()}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>nav(b.dataset.view));
+function badge(s){return `<span class="badge ${s==="RESPONSIVE"?"green":"red"}">${s}</span>`}
+function renderDash(){
+kTotal.textContent=records.length;kSouth.textContent=records.filter(x=>x.direction==="SOUTH").length;kResp.textContent=records.filter(x=>x.status==="RESPONSIVE").length;kUnresp.textContent=records.filter(x=>x.status==="UNRESPONSIVE").length;kIntl.textContent=new Set(records.map(x=>x.flag).filter(Boolean)).size;
+let routes=["NORTH","NORTHEAST","EAST","SOUTHEAST","SOUTH","SOUTHWEST","WEST","NORTHWEST"], types={};records.forEach(x=>types[x.type]=(types[x.type]||0)+1);
+routeBars.innerHTML=routes.map(r=>{let n=records.filter(x=>x.direction===r).length;return `<div class="bar"><span>${r}</span><div class="track"><div class="fill" style="width:${records.length?n/records.length*100:0}%"></div></div><b>${n}</b></div>`}).join("");
+typeBars.innerHTML=Object.entries(types).map(([t,n])=>`<div class="bar"><span>${t}</span><div class="track"><div class="fill" style="width:${n/records.length*100}%"></div></div><b>${n}</b></div>`).join("")||"<div class='muted'>No records</div>";
+recent.innerHTML=records.slice(-6).reverse().map(x=>`<tr><td>${x.vessel}</td><td>${x.type}</td><td>${x.direction}</td><td>${x.speed}</td><td>${x.lastPort}</td><td>${x.nextPort}</td><td>${badge(x.status)}</td></tr>`).join("");
+}
+function renderTable(){
+let q=(search.value||"").toLowerCase(),d=dirFilter.value,s=statusFilter.value;
+let a=records.filter(x=>(!q||JSON.stringify(x).toLowerCase().includes(q))&&(!d||x.direction===d)&&(!s||x.status===s));
+monitorRows.innerHTML=a.map((x,i)=>`<tr><td>${i+1}</td><td>${x.datetime}</td><td>${x.vessel}</td><td>${x.type}</td><td>${x.callsign}</td><td>${x.heading}</td><td>${x.speed}</td><td>${x.direction}</td><td>${x.cargo}</td><td>${x.lastPort}</td><td>${x.nextPort}</td><td>${x.flag}</td><td>${badge(x.status)}</td><td><button class="btn danger" onclick="delRecord(${records.indexOf(x)})">Delete</button></td></tr>`).join("")||"<tr><td colspan='14'>No records found.</td></tr>";
+}
+function delRecord(i){if(confirm("Delete this monitoring record?")){records.splice(i,1);save();renderTable();renderDash();renderReport()}}
+function openModal(){modal.classList.add("open")}function closeModal(){modal.classList.remove("open");vesselForm.reset()}
+vesselForm.onsubmit=e=>{e.preventDefault();let o=Object.fromEntries(new FormData(vesselForm));records.push(o);save();closeModal();renderDash();nav("monitoring");}
+function addRadar(){let contact=prompt("Radar contact name / number:");if(!contact)return;radar.push({time:new Date().toLocaleTimeString(),contact,bearing:prompt("Bearing:")||"",range:prompt("Range:")||"",course:prompt("Course:")||"",speed:prompt("Speed:")||"",remarks:prompt("Remarks:")||""});save();renderRadar()}
+function renderRadar(){radarRows.innerHTML=radar.map(x=>`<tr><td>${x.time}</td><td>${x.contact}</td><td>${x.bearing}</td><td>${x.range}</td><td>${x.course}</td><td>${x.speed}</td><td>${x.remarks}</td></tr>`).join("")}
+function renderReport(){let total=records.length;let north=records.filter(x=>x.direction==="NORTH").length,south=records.filter(x=>x.direction==="SOUTH").length,resp=records.filter(x=>x.status==="RESPONSIVE").length,un=records.filter(x=>x.status==="UNRESPONSIVE").length;let last={},next={};records.forEach(x=>{if(x.lastPort)last[x.lastPort]=(last[x.lastPort]||0)+1;if(x.nextPort)next[x.nextPort]=(next[x.nextPort]||0)+1});reportContent.innerHTML=`<h2>DAILY VESSEL MONITORING REPORT</h2><p style="text-align:center">Automatic Identification System (AIS) • CG Radar Station Pandan, Catanduanes</p><hr><p><b>Reporting period:</b> Demo dataset based on 07–08 September 2025</p><div class="cards"><div class="card"><div class="label">Total Vessels</div><div class="kpi">${total}</div></div><div class="card"><div class="label">Southbound</div><div class="kpi">${south}</div></div><div class="card"><div class="label">Responsive</div><div class="kpi">${resp}</div></div><div class="card"><div class="label">Unresponsive</div><div class="kpi">${un}</div></div></div><h3>Route Summary</h3><p>North: ${north} &nbsp; | &nbsp; South: ${south} &nbsp; | &nbsp; Other directions: ${total-north-south}</p><h3>Last Port of Call</h3><p>${Object.entries(last).map(([k,v])=>`${k}: ${v}`).join(" • ")||"None recorded"}</p><h3>Next Port of Call</h3><p>${Object.entries(next).map(([k,v])=>`${k}: ${v}`).join(" • ")||"None recorded"}</p><h3>Vessel Records</h3><div class="tablewrap"><table><tr><th>Vessel</th><th>Type</th><th>Direction</th><th>Last Port</th><th>Next Port</th><th>Status</th></tr>${records.map(x=>`<tr><td>${x.vessel}</td><td>${x.type}</td><td>${x.direction}</td><td>${x.lastPort}</td><td>${x.nextPort}</td><td>${x.status}</td></tr>`).join("")}</table></div><div class="sig"><div>Prepared by<br><br>Duty AIS Monitor</div><div>Checked by<br><br>________________</div><div>Approved by<br><br>________________</div></div>`}
+function exportCSV(){let keys=["datetime","distance","shore","location","challenged","distanceChallenged","challengedLocation","vessel","type","callsign","heading","speed","direction","freeboard","cargo","lastPort","nextPort","eta","flag","crew","captain","aor","status"];let csv=[keys.join(","),...records.map(x=>keys.map(k=>`"${String(x[k]||"").replaceAll('"','""')}"`).join(","))].join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="DVM_Vessel_Monitoring.csv";a.click()}
+renderDash();renderTable();renderRadar();renderReport();
+</script>
+</body></html>
